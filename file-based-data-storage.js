@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require('fs');
 
 class FileBasedDataStorage {
@@ -33,6 +34,13 @@ class FileBasedDataStorage {
             } else if (fileSize + Buffer.byteLength(JSON.stringify(value)) > 1024 * 1024 * 1024) {
                 throw 'File size will be exceed the limit';
             }
+        } else {
+            // Make directory
+            if (this._filePath.split('/').length > 1) {
+                fs.mkdirSync(path.dirname(this._filePath), {recursive: true});
+            }
+            // Create a new file
+            fs.writeFileSync(this._filePath, '{}');
         }
 
         // Check key is alread exist
@@ -49,7 +57,7 @@ class FileBasedDataStorage {
         storageData[key] = {value, timeToLive};
 
         // Write object into the file
-        fs.writeFileSync(this._filePath, storageData);
+        fs.writeFileSync(this._filePath, JSON.stringify(storageData));
     }
 }
 
