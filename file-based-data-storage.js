@@ -8,7 +8,7 @@ class FileBasedDataStorage {
         this._filePath = filePath;
     }
 
-    create(key, value, timeToLive = false) {
+    create(key, value, timeToLive = 0) {
 
         // Check key is valid
         if (!key || key.toString().length > 32) {
@@ -21,7 +21,7 @@ class FileBasedDataStorage {
         }
 
         // Check timetoLive is a number
-        if (timeToLive !== false && (isNaN(timeToLive) || timeToLive <= 0 || timeToLive % 1 !== 0)) {
+        if (isNaN(timeToLive) || timeToLive <= 0 || timeToLive % 1 !== 0) {
             throw 'Not a valid timeToLive';
         }
 
@@ -44,17 +44,13 @@ class FileBasedDataStorage {
         }
 
         // Check key is alread exist
-        let storage = fs.readFileSync(this._filePath);
-        let storageData = {};
-        if (storage.length > 0) {
-            storageData = JSON.parse(storage);
-        }
+        let storageData = JSON.parse(fs.readFileSync(this._filePath));
         if (storageData.hasOwnProperty(key)) {
             throw 'Key is already exist';
         }
 
         // Create a new key value pair to file
-        storageData[key] = {value, timeToLive};
+        storageData[key] = {value, timeToLive: timeToLive != 0 ? (new Date().getTime() + timeToLive * 1000) : false};
 
         // Write object into the file
         fs.writeFileSync(this._filePath, JSON.stringify(storageData));
