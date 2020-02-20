@@ -3,7 +3,7 @@ const FileBasedDataStorage = require('./file-based-data-storage');
 
 
 // Initialize class with optional filePath parameter
-let fbds = new FileBasedDataStorage('');
+let fbds = new FileBasedDataStorage();
 
 
 // Create a key value pair. Last parameter is timeToLive which is optional

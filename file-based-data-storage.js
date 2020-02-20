@@ -1,11 +1,15 @@
 const path = require('path');
+const isValidPath = require('is-valid-path');
 const fs = require('fs');
 
 class FileBasedDataStorage {
 
     constructor(filePath = 'data/storage.json') {
 
-        console.log(path.basename(filePath));
+        // Validate filePath is valid
+        if (!isValidPath(filePath)) {
+            throw 'File path is not valid';
+        }
 
         this._filePath = filePath;
     }
