@@ -13,5 +13,5 @@ Tested OS:
 
 # How To Run
 
-  Step 1: $ npm install
+  Step 1: $ npm install  
   Step 2: $ node app
