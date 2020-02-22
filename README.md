@@ -1,5 +1,5 @@
-Build a file-based key-value data store that supports the basic CRD (create, read, and delete)
-operations.
+## Build a file-based key-value data store that supports the basic CRD (create, read, and delete)
+operations
 
 Developing Platform:
   NodeJs: 12.3.1
@@ -11,4 +11,7 @@ Tested OS:
   Windows
 
 
-## How To Run
+# How To Run
+
+  Step 1: $ npm install
+  Step 2: $ node app
