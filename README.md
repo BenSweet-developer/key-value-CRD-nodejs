@@ -7,7 +7,7 @@ Application Supported OS:
   Windows, Mac, Linux
   
 Tested OS:
-  Windows
+  Windows, Mac, Linux
 
 
 ## How To Run
