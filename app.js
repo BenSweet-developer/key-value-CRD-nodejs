@@ -7,28 +7,33 @@ let fbds = new FileBasedDataStorage();
 
 
 // Create a key value pair. Last parameter is timeToLive which is optional
-let response_create = fbds.create('profile2', {name: 'benny1', job: 'IT'}, 30);
-// if response has error then print the error, otherwise print success message
-if (response_create.err) {
-    console.error(response_create.err);
+let responseCreate = fbds.create('profile', {name: 'Benny Sweetson M', job: 'IT'}, 30);
+
+// if response has error then print the error, otherwise print message.
+if (responseCreate.err) {
+    console.error(responseCreate.err);
 } else {
-    console.log('Value created successfully');
+    console.log(responseCreate.message);
 }
 
 
 // Read a value by key
-let response_read = fbds.read('profile2');
-if (response_read.err) {
-    console.error(response_read.err);
+let responseRead = fbds.read('profile');
+
+// if response has error then print the error, otherwise print message.
+if (responseRead.err) {
+    console.error(responseRead.err);
 } else {
-    console.log('Value => ', response_read.value);
+    console.log('Value => ', responseRead.value);
 }
 
 
 // Delete a value by key
-let response_delete = fbds.delete('profile2');
-if (response_delete.err) {
-    console.error(response_delete.err);
+let responseDelete = fbds.delete('profile');
+
+// if response has error then print the error, otherwise print message.
+if (responseDelete.err) {
+    console.error(responseDelete.err);
 } else {
-    console.log('Value deleted successfully');
+    console.log(responseDelete.message);
 }
