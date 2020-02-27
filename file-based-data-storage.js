@@ -4,16 +4,28 @@ const fs = require('fs');
 
 class FileBasedDataStorage {
 
+    /**
+     * Init class with optional file path
+     * @param {string} filePath A valid file path to store key-value pair data
+     * @throw if file path is not valid then it will throw error
+     */
     constructor(filePath = 'data/storage.json') {
 
         // Validate filePath is valid
         if (!isValidPath(filePath)) {
-            throw 'File path is not valid';
+            throw new Error('Storage file path is not valid');
         }
 
         this._filePath = filePath;
     }
 
+    /**
+     * Create a key-value pair into a storage with optional timeToLive
+     * @param {string} key A string that capped at 32 char
+     * @param {{}} value  A JSON Object that capped at 16 KB
+     * @param {number} timeToLive Seconds to be live the value to read or delete
+     * @return {{err: string}|{message: string}} Return a JSON Object that contain err key or message key
+     */
     create(key, value, timeToLive = 0) {
 
         // Check key is valid
@@ -42,9 +54,8 @@ class FileBasedDataStorage {
             }
         } else {
             // Make directory
-            if (this._filePath.split('/').length > 1) {
-                fs.mkdirSync(path.dirname(this._filePath), {recursive: true});
-            }
+            fs.mkdirSync(path.dirname(this._filePath), {recursive: true});
+
             // Create a new file
             fs.writeFileSync(this._filePath, '{}');
         }
@@ -64,7 +75,17 @@ class FileBasedDataStorage {
         return { message: 'Value created sucessfully' };
     }
 
+    /**
+     * Read a value from storage
+     * @param {string} key A string that capped at 32 char
+     * @return {{err: string}|{value: {}, message: string}} Return a JSON Object that contain err key or value, message keys
+     */
     read(key) {
+
+        // Check key is valid
+        if (!key || typeof key != 'string' || key.toString().length > 32) {
+            return { err: 'Not a valid key' };
+        }
 
         // Check file is exists
         if (!fs.existsSync(this._filePath)) {
@@ -74,16 +95,31 @@ class FileBasedDataStorage {
         // Read file data
         let storageData = JSON.parse(fs.readFileSync(this._filePath));
 
-        // Check key is exist and timeToLive
-        if (!storageData.hasOwnProperty(key) || (storageData[key].timeToLive !== false && storageData[key].timeToLive < (new Date()).getTime())) {
+        // Check key is exist
+        if (!storageData.hasOwnProperty(key)) {
             return { err: 'Key is not exist' };
+        }
+
+        // Check key is available for read using timeToLive
+        if (storageData[key].timeToLive !== false && storageData[key].timeToLive < (new Date()).getTime()) {
+            return { err: 'Key is not available for read' };
         }
 
         // Return the value of the key
         return { value: storageData[key].value, message: 'Value read sucessfully' };
     }
 
+    /**
+     * Delete a value from storage
+     * @param {string} key A string that capped at 32 char
+     * @return {{err: string}|{message: string}} Return a JSON Object that contain err key or message key
+     */
     delete(key) {
+
+        // Check key is valid
+        if (!key || typeof key != 'string' || key.toString().length > 32) {
+            return { err: 'Not a valid key' };
+        }
 
         // Check file is exists
         if (!fs.existsSync(this._filePath)) {
@@ -93,9 +129,14 @@ class FileBasedDataStorage {
         // Read the file data
         let storageData = JSON.parse(fs.readFileSync(this._filePath));
 
-        // Check key is exist and timeToLive
-        if (!storageData.hasOwnProperty(key) || (storageData[key].timeToLive !== false && storageData[key].timeToLive < (new Date()).getTime())) {
+        // Check key is exist
+        if (!storageData.hasOwnProperty(key)) {
             return { err: 'Key is not exist' };
+        }
+
+        // Check key is available for delete using timeToLive
+        if (storageData[key].timeToLive !== false && storageData[key].timeToLive < (new Date()).getTime()) {
+            return { err: 'Key is not available for delete' };
         }
 
         // delete the from storageData
