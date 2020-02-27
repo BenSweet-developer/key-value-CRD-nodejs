@@ -17,7 +17,7 @@ class FileBasedDataStorage {
     create(key, value, timeToLive = 0) {
 
         // Check key is valid
-        if (!key || key.toString().length > 32) {
+        if (!key || typeof key != 'string' || key.toString().length > 32) {
             return { err: 'Not a valid key' };
         }
 
@@ -36,9 +36,9 @@ class FileBasedDataStorage {
             
             let fileSize = fs.statSync(this._filePath).size;
             if (fileSize > 1024 * 1024 * 1024) {
-                return { err: 'File size is already reached the limit' };
+                return { err: 'Storage is already reached the limit of 1GB' };
             } else if (fileSize + Buffer.byteLength(JSON.stringify(value)) > 1024 * 1024 * 1024) {
-                return { err: 'File size will be exceed the limit' };
+                return { err: 'Storage will be exceed the limit of 1GB' };
             }
         } else {
             // Make directory
@@ -61,14 +61,14 @@ class FileBasedDataStorage {
         // Write object into the file
         fs.writeFileSync(this._filePath, JSON.stringify(storageData));
 
-        return { success: true };
+        return { message: 'Value created sucessfully' };
     }
 
     read(key) {
 
         // Check file is exists
         if (!fs.existsSync(this._filePath)) {
-            return { err: 'File is not created' };
+            return { err: 'No data available in storage' };
         }
 
         // Read file data
@@ -80,14 +80,14 @@ class FileBasedDataStorage {
         }
 
         // Return the value of the key
-        return { value: storageData[key].value };
+        return { value: storageData[key].value, message: 'Value read sucessfully' };
     }
 
     delete(key) {
 
         // Check file is exists
         if (!fs.existsSync(this._filePath)) {
-            return { err: 'File is not created' };
+            return { err: 'No data available in storage' };
         }
 
         // Read the file data
@@ -104,7 +104,7 @@ class FileBasedDataStorage {
         // store the data to the same file
         fs.writeFileSync(this._filePath, JSON.stringify(storageData));
 
-        return { success: true };
+        return { message: 'Value deleted sucessfully' };
     }
 }
 
