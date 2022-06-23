@@ -147,6 +147,20 @@ class FileBasedDataStorage {
 
         return { message: 'Value deleted sucessfully' };
     }
+
+    readAll() {
+
+        // Check file is exists
+        if (!fs.existsSync(this._filePath)) {
+            return { err: 'No data available in storage' };
+        }
+
+        // Read file data
+        let storageData = JSON.parse(fs.readFileSync(this._filePath));
+
+        // Return the value of the key
+        return storageData;
+    }
 }
 
 module.exports = FileBasedDataStorage;
