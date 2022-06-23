@@ -150,16 +150,28 @@ class FileBasedDataStorage {
 
     readAll() {
 
-        // Check file is exists
-        if (!fs.existsSync(this._filePath)) {
-            return { err: 'No data available in storage' };
-        }
+        // Create data file if not exist
+        this.#createDataFileIfNotExist();
 
         // Read file data
         let storageData = JSON.parse(fs.readFileSync(this._filePath));
 
         // Return the value of the key
         return storageData;
+    }
+    
+    /**
+    * Create data file if not exist
+    */
+    #createDataFileIfNotExist() {
+
+        if (!fs.existsSync(this._filePath)) {
+            // Make directory
+            fs.mkdirSync(path.dirname(this._filePath), {recursive: true});
+
+            // Create a new file
+            fs.writeFileSync(this._filePath, '{}');
+        }
     }
 }
 
